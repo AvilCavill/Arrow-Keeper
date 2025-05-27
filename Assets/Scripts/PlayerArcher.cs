@@ -1,15 +1,12 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerArcher : MonoBehaviour
 {
     public GameObject arrowPrefab;
-    public Transform shootpoint;
-    public float arrowForce;
+    public Transform shootPoint;
+    public float arrowSpeed = 30f;
 
-    private void Update()
+    void Update()
     {
         if (Input.GetMouseButtonDown(0))
         {
@@ -17,10 +14,13 @@ public class PlayerArcher : MonoBehaviour
         }
     }
 
-    public void ShootArrow()
+    void ShootArrow()
     {
-        GameObject arrow = Instantiate(arrowPrefab, shootpoint.position, Quaternion.identity);
+        // Creamos la flecha con la rotación del shootPoint
+        GameObject arrow = Instantiate(arrowPrefab, shootPoint.position, shootPoint.rotation);
+
+        // Añadimos velocidad al Rigidbody
         Rigidbody rb = arrow.GetComponent<Rigidbody>();
-        rb.velocity = arrow.transform.forward * arrowForce;
+        rb.velocity = shootPoint.forward * arrowSpeed;
     }
 }
