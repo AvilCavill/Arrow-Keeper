@@ -12,7 +12,7 @@ namespace GameManager
         // Update is called once per frame
         void Update()
         {
-            if (TowerHealth.Instance.health <= 0)
+            if (TowerHealth.Instance.maxHealth <= 0)
             {
                 YouLost();
             }

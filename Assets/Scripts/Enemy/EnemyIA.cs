@@ -31,8 +31,13 @@ public class EnemyIA : MonoBehaviour
         health -= dmg;
         if (health <= 0)
         {
-            Destroy(gameObject);
+            Die();
         }
+    }
+
+    public void Die()
+    {
+        Destroy(gameObject);
     }
 
     private void OnTriggerEnter(Collider other)

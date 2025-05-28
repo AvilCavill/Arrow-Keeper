@@ -244,8 +244,8 @@ GameObject:
   - component: {fileID: 6011870102706557575}
   - component: {fileID: 4107228105787288723}
   m_Layer: 0
-  m_Name: HeavyEnemy
-  m_TagString: Enemy
+  m_Name: EnemyGiant
+  m_TagString: EnemyGiant
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

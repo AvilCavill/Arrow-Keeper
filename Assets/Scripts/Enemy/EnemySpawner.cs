@@ -3,20 +3,23 @@ using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
 {
+    public static EnemySpawner Instance; 
     [System.Serializable]
     public class EnemyType
     {
         public GameObject prefab;
         public Transform spawnPoint;
-        public int unlockAtRound; // Ronda en la que empieza a aparecer
+        public int unlockAtRound; // Ronda en la que aparece (ej: 1, 5, 10)
     }
 
     public EnemyType[] enemyTypes;
-
     public Transform tower;
     public float spawnDelay = 1f;
 
-    public int initialEnemiesPerRound = 3;
+    // Configuración de rondas
+    public int initialEnemies = 5;
+    public int enemiesPerRoundIncrement = 2;
+    public int maxRounds = 20;
     private int currentRound = 1;
 
     void Start()
@@ -26,37 +29,54 @@ public class EnemySpawner : MonoBehaviour
 
     IEnumerator StartRounds()
     {
-        while (true)
+        while (currentRound <= maxRounds)
         {
-            int enemiesToSpawn = initialEnemiesPerRound + (currentRound - 1);
-            Debug.Log(">> ROUND " + currentRound + " — Enemies: " + enemiesToSpawn);
-            yield return StartCoroutine(SpawnWave(enemiesToSpawn));
+            Debug.Log($"RONDA {currentRound}/{maxRounds}");
+            yield return StartCoroutine(SpawnWave());
             currentRound++;
             yield return new WaitForSeconds(5f); // Tiempo entre rondas
         }
+        Debug.Log("¡Juego completado!");
     }
 
-    IEnumerator SpawnWave(int count)
+    IEnumerator SpawnWave()
+    {
+        // Calcular enemigos por tipo
+        int basicCount = GetEnemyCountForType(1);    // Básico (ronda 1+)
+        int flyingCount = GetEnemyCountForType(5);   // Volador (ronda 5+)
+        int giantCount = GetEnemyCountForType(10);   // Gigante (ronda 10+)
+
+        // Spawnear enemigos
+        yield return StartCoroutine(SpawnEnemyType("EnemyBasic", basicCount));
+        if (currentRound >= 5) yield return StartCoroutine(SpawnEnemyType("EnemyFlying", flyingCount));
+        if (currentRound >= 10) yield return StartCoroutine(SpawnEnemyType("EnemyGiant", giantCount));
+    }
+    
+    public void OnEnemyDefeated(GameObject enemy)
+    {
+        // Aquí puedes añadir lógica adicional (ej: contabilizar enemigos restantes)
+        Debug.Log("Enemigo derrotado: " + enemy.name);
+    }    
+
+    int GetEnemyCountForType(int unlockRound)
+    {
+        if (currentRound < unlockRound) return 0;
+        
+        // Fórmula: 5 iniciales + 2 por cada ronda después del unlock
+        return initialEnemies + (currentRound - unlockRound) * enemiesPerRoundIncrement;
+    }
+
+    IEnumerator SpawnEnemyType(string enemyTag, int count)
     {
         for (int i = 0; i < count; i++)
         {
-            // Filtra los enemigos que pueden spawnear esta ronda
-            var availableEnemies = new System.Collections.Generic.List<EnemyType>();
-            foreach (var enemy in enemyTypes)
+            EnemyType type = System.Array.Find(enemyTypes, e => e.prefab.tag == enemyTag);
+            if (type != null)
             {
-                if (currentRound >= enemy.unlockAtRound)
-                    availableEnemies.Add(enemy);
+                GameObject enemy = Instantiate(type.prefab, type.spawnPoint.position, Quaternion.identity);
+                enemy.GetComponent<EnemyIA>().target = tower;
+                yield return new WaitForSeconds(spawnDelay);
             }
-
-            // Selecciona un tipo aleatorio entre los disponibles
-            EnemyType chosen = availableEnemies[Random.Range(0, availableEnemies.Count)];
-
-            GameObject instance = Instantiate(chosen.prefab, chosen.spawnPoint.position, Quaternion.identity);
-            EnemyIA enemyScript = instance.GetComponent<EnemyIA>();
-            if (enemyScript != null)
-                enemyScript.target = tower;
-
-            yield return new WaitForSeconds(spawnDelay);
         }
     }
 }

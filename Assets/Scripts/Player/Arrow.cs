@@ -17,9 +17,8 @@ public class Arrow : MonoBehaviour
 
     private void OnCollisionEnter(Collision other)
     {
-        if (other.gameObject.CompareTag("Enemy"))
+        if (other.gameObject.CompareTag("EnemyBasic") || other.gameObject.CompareTag("EnemyFlying") || other.gameObject.CompareTag("EnemyGiant"))
         {
-            // Aquí hay otro error: deberías obtener el EnemyIA del objeto colisionado, no de la flecha
             EnemyIA enemyIa = other.gameObject.GetComponent<EnemyIA>();
             if(enemyIa != null)
             {

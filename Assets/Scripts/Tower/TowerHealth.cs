@@ -1,14 +1,22 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TowerHealth : MonoBehaviour
 {
 
     public static TowerHealth Instance;
-    public float health = 10;
+    public float maxHealth = 10;
+    public float currentHealth;
+    
+    public Slider healthSlider;
+    public Text healthText;
 
+    void Start()
+    {
+        currentHealth = maxHealth;
+        UpdateUI();
+    }
+    
     private void Awake()
     {
         Instance = this;
@@ -16,13 +24,28 @@ public class TowerHealth : MonoBehaviour
 
     public void TakeDamage(float damage)
     {
-        health -= damage;
-        if (health <= 0)
+        maxHealth -= damage;
+        if (maxHealth <= 0)
         {
             Debug.Log("La torre ha caido!");
         }
         {
             
+        }
+    }
+    
+    void UpdateUI()
+    {
+        // Actualizar Slider
+        if (healthSlider != null)
+        {
+            healthSlider.value = (float)currentHealth / maxHealth; // Normalizado (0-1)
+        }
+
+        // Actualizar Text (opcional)
+        if (healthText != null)
+        {
+            healthText.text = $"{currentHealth}/{maxHealth}";
         }
     }
 }

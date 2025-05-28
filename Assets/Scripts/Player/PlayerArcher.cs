@@ -2,12 +2,14 @@ using UnityEngine;
 
 public class PlayerArcher : MonoBehaviour
 {
-    public Transform[] positions; // [0] = abajo, [1] = medio, [2] = arriba
-    private int currentIndex = 1; // empieza en el medio
+    public Transform[] positions; 
+    private int currentIndex = 1; 
 
     public GameObject arrowPrefab;
     public Transform shootPoint;
     public float arrowSpeed = 30f;
+    public float shootCooldown = 1.0f; 
+    private float lastShootTime;
 
     void Update()
     {
@@ -39,9 +41,9 @@ public class PlayerArcher : MonoBehaviour
 
     void HandleShooting()
     {
-        if (Input.GetMouseButtonDown(0)) // Click derecho
+        if (Input.GetMouseButtonDown(0) && Time.time > lastShootTime + shootCooldown) // Click derecho
         {
-
+            lastShootTime = Time.time;
             GameObject arrow = Instantiate(
                 arrowPrefab,
                 shootPoint.position,
