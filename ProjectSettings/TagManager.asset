@@ -8,6 +8,8 @@ TagManager:
   - EnemyBasic
   - EnemyFlying
   - EnemyGiant
+  - ReachPoint1
+  - ReachPoint2
   layers:
   - Default
   - TransparentFX

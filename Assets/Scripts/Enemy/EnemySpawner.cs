@@ -17,10 +17,11 @@ public class EnemySpawner : MonoBehaviour
     public float spawnDelay = 1f;
 
     // Configuración de rondas
-    public int initialEnemies = 5;
-    public int enemiesPerRoundIncrement = 2;
-    public int maxRounds = 20;
+    public int initialEnemies = 4;
+    public int enemiesPerRoundIncrement = 1;
+    public int maxRounds = 10;
     private int currentRound = 1;
+    private int enemiesRemaining = 0;
 
     void Start()
     {
@@ -31,16 +32,19 @@ public class EnemySpawner : MonoBehaviour
     {
         while (currentRound <= maxRounds)
         {
+            GameManager.GameManager.Instance.SetCurrentRound(currentRound);
             Debug.Log($"RONDA {currentRound}/{maxRounds}");
             yield return StartCoroutine(SpawnWave());
             currentRound++;
             yield return new WaitForSeconds(5f); // Tiempo entre rondas
         }
+        GameManager.GameManager.Instance.YouWin();
         Debug.Log("¡Juego completado!");
     }
 
     IEnumerator SpawnWave()
     {
+        
         // Calcular enemigos por tipo
         int basicCount = GetEnemyCountForType(1);    // Básico (ronda 1+)
         int flyingCount = GetEnemyCountForType(5);   // Volador (ronda 5+)
@@ -51,12 +55,6 @@ public class EnemySpawner : MonoBehaviour
         if (currentRound >= 5) yield return StartCoroutine(SpawnEnemyType("EnemyFlying", flyingCount));
         if (currentRound >= 10) yield return StartCoroutine(SpawnEnemyType("EnemyGiant", giantCount));
     }
-    
-    public void OnEnemyDefeated(GameObject enemy)
-    {
-        // Aquí puedes añadir lógica adicional (ej: contabilizar enemigos restantes)
-        Debug.Log("Enemigo derrotado: " + enemy.name);
-    }    
 
     int GetEnemyCountForType(int unlockRound)
     {

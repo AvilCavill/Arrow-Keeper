@@ -1,3 +1,5 @@
+using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,7 +11,7 @@ public class TowerHealth : MonoBehaviour
     public float currentHealth;
     
     public Slider healthSlider;
-    public Text healthText;
+    public TMP_Text healthText;
 
     void Start()
     {
@@ -24,22 +26,16 @@ public class TowerHealth : MonoBehaviour
 
     public void TakeDamage(float damage)
     {
-        maxHealth -= damage;
-        if (maxHealth <= 0)
-        {
-            Debug.Log("La torre ha caido!");
-        }
-        {
-            
-        }
+        currentHealth -= damage;
+        UpdateUI();
     }
-    
+
     void UpdateUI()
     {
         // Actualizar Slider
         if (healthSlider != null)
         {
-            healthSlider.value = (float)currentHealth / maxHealth; // Normalizado (0-1)
+            healthSlider.value = (float)currentHealth; 
         }
 
         // Actualizar Text (opcional)

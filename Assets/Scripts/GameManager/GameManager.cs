@@ -1,35 +1,83 @@
+using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace GameManager
 {
     public class GameManager : MonoBehaviour
     {
-        // Start is called before the first frame update
-        void Start()
+        public static GameManager Instance;
+
+        public GameObject youLoseCanvas;
+        public GameObject youWinCanvas;
+        public GameObject hudCanvas;
+        public TMP_Text roundsInfo;
+        public TMP_Text WinroundsText;
+        public TMP_Text LoseroundsText;
+        public TMP_Text WinkillsText;
+        public TMP_Text LosekillsText;
+
+        private int enemiesKilled = 0;
+        private int currentRound = 1;
+
+        void Awake()
         {
+            Instance = this;
         }
 
-        // Update is called once per frame
+        void Start()
+        {
+            youLoseCanvas.SetActive(false);
+            youWinCanvas.SetActive(false);
+        }
+
         void Update()
         {
-            if (TowerHealth.Instance.maxHealth <= 0)
+            if (TowerHealth.Instance.currentHealth <= 0)
             {
                 YouLost();
             }
+            roundsInfo.text = ("Round: " + currentRound.ToString());
         }
 
-        private void YouLost()
+        public void AddKill()
         {
-            //Show how many rounds you survived
-            //Enemies killed
-            //Canvas with restart button o main menu button
+            enemiesKilled++;
+        }
+
+        public void SetCurrentRound(int round)
+        {
+            currentRound = round;
+        }
+
+        public void YouLost()
+        {
+            hudCanvas.SetActive(false);
+            youLoseCanvas.SetActive(true);
+            LoseroundsText.text = ("Round Reached:" + currentRound);
+            LosekillsText.text = ("Enemies Defeated:" + enemiesKilled);
+            Time.timeScale = 0;
+        }
+
+        public void YouWin()
+        {
+            hudCanvas.SetActive(false);
+            youWinCanvas.SetActive(true);
+            WinroundsText.text = ("Round Reached:" + currentRound);
+            WinkillsText.text = ("Enemies Defeated:" + enemiesKilled);
+            Time.timeScale = 0;
+        }
+
+        public void QuitGame()
+        {
+            Application.Quit();
         }
         
-        private void YouWin()
+        public void Restart()
         {
-            //Show how many rounds you survived
-            //Enemies killed
-            //Canvas with restart button o main menu button
+            Time.timeScale = 1;
+            SceneManager.LoadScene("GameScene");
         }
     }
 }

@@ -7,24 +7,11 @@ using Vector3 = UnityEngine.Vector3;
 
 public class EnemyIA : MonoBehaviour
 {
-    public float speed = 2f;
+   
     public float damage = 1;
     public int health = 3;
     public Transform target;
 
-    private void Start()
-    {
-        target = GameObject.FindGameObjectWithTag("Tower").transform;
-    }
-
-    void Update()
-    {
-        if (target == null) return;
-
-        Vector3 dir = (target.position - transform.position).normalized;
-        transform.position += dir * speed * Time.deltaTime;
-
-    }
 
     public void TakeDamage(int dmg)
     {
@@ -37,6 +24,7 @@ public class EnemyIA : MonoBehaviour
 
     public void Die()
     {
+        GameManager.GameManager.Instance.AddKill();
         Destroy(gameObject);
     }
 
